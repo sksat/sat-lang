@@ -28,6 +28,19 @@ tokenizer::tokenizer_t tokenizer::sat = [](std::string_view &src){
 		'?'
 	};
 	static std::vector<std::string> delim_str = {
+		"::", ":",
+		"<<=", "<<", "<=", "<-",
+		">>=", ">>", ">=",
+		"->", "--", "-=", "-",
+		"++", "+=", "+",
+		"&&", "&=", "&",
+		"||", "|=", "|",
+		"*=", "*",
+		"/=", "/",
+		"%=", "%",
+		"!=", "!",
+		"^=", "^",
+		"~=", "~",
 	};
 
 	// 空白をスキップ
@@ -62,7 +75,7 @@ tokenizer::tokenizer_t tokenizer::sat = [](std::string_view &src){
 
 		// 複数文字で区切れるやつ
 		for(const auto& ds : delim_str){
-			auto tmp = src.substr(0, ds.size());
+			auto tmp = src.substr(i, ds.size());
 			if(ds != tmp) continue;
 			if(i != 0) goto default_token;
 			src.remove_prefix(ds.size());
