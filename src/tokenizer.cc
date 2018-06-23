@@ -1,20 +1,33 @@
 #include "tokenizer.hpp"
 
-void skip_space(std::string_view &src){
-	while(true){
-		if(src.empty()) break;
-		switch(src[0]){
-			case ' ':
-			case '\t':
-			case '\n':
-				src.remove_prefix(1);
-				break;
-			default:
-				goto fin;
-		}
+void skip_space_and_comment(std::string_view &src){
+	if(src.empty()) return;
+	switch(src[0]){
+		// space
+		case ' ': case '\t': case '\n':
+			src.remove_prefix(1);
+			skip_space_and_comment(src);
+			break;
+		case '/':
+			if(src[1] == '/'){
+				size_t i;
+				for(i=2; i<src.size(); i++){
+					if(src[i] == '\n') break;
+				}
+				src.remove_prefix(i);
+				skip_space_and_comment(src);
+			}else if(src[1] == '*'){
+				size_t i;
+				for(i=3; i<src.size(); i++){
+					if(src[i-1] == '*' || src[i] == '/') break;
+				}
+				src.remove_prefix(i+1);
+				skip_space_and_comment(src);
+			}
+			return;
+		default:
+			return;
 	}
-fin:
-	return;
 }
 
 tokenizer::tokenizer_t tokenizer::sat = [](std::string_view &src){
@@ -43,8 +56,7 @@ tokenizer::tokenizer_t tokenizer::sat = [](std::string_view &src){
 		"~=", "~",
 	};
 
-	// 空白をスキップ
-	skip_space(src);
+	skip_space_and_comment(src); // 空白とコメントをスキップ
 
 	std::string_view token;
 	for(size_t i=0; i<=src.size(); i++){
