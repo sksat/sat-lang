@@ -2,7 +2,7 @@ TARGET	= satc
 OBJS	= main.o source.o tokenizer.o
 
 CXX		= clang++
-CXXFLAGS= -std=c++1z
+CXXFLAGS= -std=c++1z -g
 
 %.o: %.cc
 	$(CXX) -c $< $(CXXFLAGS) -o $@
