@@ -1,5 +1,7 @@
 #include "tokenizer.hpp"
 
+using token_type = tokenizer::type_t;
+
 void skip_space_and_comment(std::string_view &src){
 	if(src.empty()) return;
 	switch(src[0]){
@@ -73,6 +75,7 @@ tokenizer::tokenizer_t tokenizer::sat = [](std::string_view &src){
 			}
 			token = src.substr(0, siz);
 			src.remove_prefix(siz);
+			token.type = token_type::String;
 			return token;
 		}
 
@@ -82,6 +85,7 @@ tokenizer::tokenizer_t tokenizer::sat = [](std::string_view &src){
 			if(i != 0) goto default_token;
 			token = src.substr(0, 1);
 			src.remove_prefix(1);
+			token.type = token_type::Delim;
 			return token;
 		}
 
@@ -91,6 +95,7 @@ tokenizer::tokenizer_t tokenizer::sat = [](std::string_view &src){
 			if(ds != token) continue;
 			if(i != 0) goto default_token;
 			src.remove_prefix(ds.size());
+			token.type = (token==":" ? token_type::Delim : token_type::Operator);
 			return token;
 		}
 
@@ -98,6 +103,7 @@ tokenizer::tokenizer_t tokenizer::sat = [](std::string_view &src){
 		continue;
 default_token:
 		token = src.substr(0, i);
+		token.type = token_type::Unknown;
 		src.remove_prefix(i);
 		return token;
 	}

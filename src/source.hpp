@@ -17,7 +17,7 @@ public:
 	void load_file();
 
 	struct token_t : public std::string_view {
-		size_t type;
+		size_t type= 0;
 
 		token_t& operator=(std::string_view str){
 			swap(str);
