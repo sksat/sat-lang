@@ -13,9 +13,12 @@ namespace ast {
 
 	class Base {
 	public:
+		Base(){}
+		virtual ~Base(){}
+
 		virtual void parse() = 0;
 
-		std::vector<token_t> token;
+		std::vector<token_t>::const_iterator begin, end;
 	};
 
 	// 式
@@ -26,22 +29,18 @@ namespace ast {
 	// 即値
 	class ImmExpr : public Expr {
 	public:
-		void parse();
-
 		std::any content;
 	};
 
 	// 変数
 	class VariableExpr : public Expr {
 	public:
-		void parse();
 	};
 
 	// 2項演算
 	class BinaryExpr: public Expr {
 	public:
-		const token_t get_operator() const { return token[0]; }
-
+		token_t operator_;
 		std::unique_ptr<Expr> lhs, rhs;
 	};
 
@@ -54,17 +53,13 @@ namespace ast {
 	// 括弧
 	class BracketsExpr : public Expr {
 	public:
-		void parse();
-
 		std::unique_ptr<Expr> expr;
 	};
 
 	// 関数呼び出し
 	class CallFuncExpr : public Expr {
 	public:
-		void parse();
-		const token_t get_name() const { return token[0]; }
-
+		token_t name;
 		std::unique_ptr<BracketsExpr> args;
 	};
 
@@ -73,9 +68,7 @@ namespace ast {
 	// const fuga = hoge;
 	class DefVariable : public Base {
 	public:
-		void parse();
-		bool is_const() const { return ("const" == token[0]); }
-
+		bool is_const();
 		std::unique_ptr<Expr> init_expr;
 	};
 
@@ -91,8 +84,6 @@ namespace ast {
 	// 関数定義
 	class DefFuncBlock : public Block {
 	public:
-		void parse();
-		const token_t get_name() const { return token[0]; }
 	};
 
 	// ifブロック
