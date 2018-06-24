@@ -16,7 +16,14 @@ public:
 
 	void load_file();
 
-	using token_t = std::string_view;
+	struct token_t : public std::string_view {
+		size_t type;
+
+		token_t& operator=(std::string_view str){
+			swap(str);
+			return *this;
+		}
+	};
 	using tokenizer_t = std::function<token_t(std::string_view&)>;
 
 	void set_tokenizer(tokenizer_t t){

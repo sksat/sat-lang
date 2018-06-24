@@ -58,7 +58,7 @@ tokenizer::tokenizer_t tokenizer::sat = [](std::string_view &src){
 
 	skip_space_and_comment(src); // 空白とコメントをスキップ
 
-	std::string_view token;
+	token_t token;
 	for(size_t i=0; i<src.size(); i++){
 		// 文字列
 		if(src[i] == '\'' || src[i] == '\"'){
@@ -87,14 +87,14 @@ tokenizer::tokenizer_t tokenizer::sat = [](std::string_view &src){
 
 		// 複数文字で区切れるやつ
 		for(const auto& ds : delim_str){
-			auto tmp = src.substr(i, ds.size());
-			if(ds != tmp) continue;
+			token = src.substr(i, ds.size());
+			if(ds != token) continue;
 			if(i != 0) goto default_token;
 			src.remove_prefix(ds.size());
-			return tmp;
+			return token;
 		}
 
-		// 通常時はdefault_tokenに行かない
+		// 区切り文字の時はdefault_tokenに行かない
 		continue;
 default_token:
 		token = src.substr(0, i);
@@ -102,5 +102,5 @@ default_token:
 		return token;
 	}
 
-	return src;
+	return token;
 };
