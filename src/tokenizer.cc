@@ -33,6 +33,7 @@ void skip_space_and_comment(std::string_view &src){
 }
 
 tokenizer::tokenizer_t tokenizer::sat = [](std::string_view &src){
+	token_t token;
 	static std::vector<char> delim_char = {
 		// 1文字で区切れるやつ
 		' ', '\t', '\n',
@@ -58,9 +59,33 @@ tokenizer::tokenizer_t tokenizer::sat = [](std::string_view &src){
 		"~=", "~",
 	};
 
+	auto check_token_type = [&]{
+		auto& t = token.type = token_type::Identifier;
+		if(token.empty()) return;
+		if(token == "fn") t = token_type::Function;
+		else if(token == "if") t = token_type::If;
+		else if(token == "loop") t = token_type::Loop;
+		else if(token[0] == '0'){
+			if(token.size() == 1) // ただの'0'
+				t = token_type::Decimal;
+			else if(token[1] == 'x') // 16進数
+				t = token_type::Hex;
+			else
+				t = token_type::Octal;
+		}else if('0'<token[0] && token[0]<='9'){
+			t = token_type::Decimal;
+			for(const auto& c : token){
+				if('0'<c && c<='9'){}
+				else{
+					t = token_type::Identifier;
+					break;
+				}
+			}
+		}
+	};
+
 	skip_space_and_comment(src); // 空白とコメントをスキップ
 
-	token_t token;
 	for(size_t i=0; i<src.size(); i++){
 		// 文字列
 		if(src[i] == '\'' || src[i] == '\"'){
@@ -103,7 +128,7 @@ tokenizer::tokenizer_t tokenizer::sat = [](std::string_view &src){
 		continue;
 default_token:
 		token = src.substr(0, i);
-		token.type = token_type::Unknown;
+		check_token_type();
 		src.remove_prefix(i);
 		return token;
 	}

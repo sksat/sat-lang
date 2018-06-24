@@ -13,9 +13,14 @@ public:
 		Unknown,
 		Delim,
 		Identifier,
-		Number,
 		String,
+		Decimal,
+		Hex,
+		Octal,
 		Operator,
+		Function,
+		If,
+		Loop,
 	};
 
 	static tokenizer_t sat;
