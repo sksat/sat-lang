@@ -59,12 +59,12 @@ tokenizer::tokenizer_t tokenizer::sat = [](std::string_view &src){
 	skip_space_and_comment(src); // 空白とコメントをスキップ
 
 	std::string_view token;
-	for(size_t i=0; i<=src.size(); i++){
+	for(size_t i=0; i<src.size(); i++){
 		// 文字列
 		if(src[i] == '\'' || src[i] == '\"'){
 			if(i != 0) goto default_token;
 			size_t siz;
-			for(siz=1;siz<=src.size();siz++){
+			for(siz=1;siz<src.size();siz++){
 				if(src[siz] == '\'' || src[siz] == '\"'){
 					if(src[siz-1] == '\\') continue;
 					siz++;
