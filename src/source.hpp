@@ -16,7 +16,8 @@ public:
 
 	void load_file();
 
-	using tokenizer_t = std::function<std::string_view(std::string_view&)>;
+	using token_t = std::string_view;
+	using tokenizer_t = std::function<token_t(std::string_view&)>;
 
 	void set_tokenizer(tokenizer_t t){
 		tokenizer = t;
@@ -25,10 +26,10 @@ public:
 	std::string_view get_raw(){ return std::string_view(src_raw); }
 	std::string_view& get_src(){ return src; }
 
-	std::string_view get_token(tokenizer_t t){
+	token_t get_token(tokenizer_t t){
 		return t(src);
 	}
-	std::string_view get_token(){
+	token_t get_token(){
 		return get_token(tokenizer);
 	}
 private:
