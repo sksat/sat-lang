@@ -42,8 +42,8 @@ tokenizer::tokenizer_t tokenizer::sat = [](std::string_view &src){
 	};
 	static std::vector<std::string> delim_str = {
 		"::", ":",
-		"<<=", "<<", "<=", "<-",
-		">>=", ">>", ">=",
+		"<<=", "<<", "<=", "<-", "<",
+		">>=", ">>", ">=", ">"
 		"->", "--", "-=", "-",
 		"++", "+=", "+",
 		"&&", "&=", "&",
