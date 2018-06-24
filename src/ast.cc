@@ -14,6 +14,41 @@ namespace ast {
 		for(auto it=begin; it!=end; it++){
 			switch(it->type){
 			case type::Function:
+				{
+					it++; auto name = *it;
+					it++; if(*it != "(") std::cerr<<"func error"<<std::endl;
+					auto args = std::make_pair(it, it);
+					while(it!=end){
+						it++;
+						if(*it == ")"){
+							args.second = it;
+							break;
+						}
+					}
+					it++; if(*it == "<-"){
+						std::cerr<<"<- is not implemented"<<std::endl;
+						return;
+					}
+					if(*it != "{") std::cerr<<"func err"<<std::endl;
+					it++;
+					auto blk = std::make_pair(it, it);
+					while(it!=end){
+						it++;
+						if(*it == "}"){
+							blk.second = it;
+							break;
+						}
+					}
+
+					{
+						std::cout<<"function def"<<std::endl
+							<< "name:\t" << name << std::endl;
+						for(auto tmp=blk.first; tmp!=blk.second; tmp++){
+							std::cout<<*tmp<<" ";
+						}
+					}
+				}
+				break;
 			case type::If:
 			case type::Loop:
 			case type::Delim:
