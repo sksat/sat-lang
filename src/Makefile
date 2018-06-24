@@ -1,5 +1,5 @@
 TARGET	= satc
-OBJS	= main.o source.o tokenizer.o
+OBJS	= main.o source.o tokenizer.o ast.o
 
 CXX		= clang++
 CXXFLAGS= -std=c++1z -g
