@@ -31,22 +31,19 @@ namespace ast {
 					}
 					if(*it != "{") std::cerr<<"func err"<<std::endl;
 					it++;
-					auto blk = std::make_pair(it, it);
+					Block blk;
+					blk.begin = it;
 					while(it!=end){
 						it++;
 						if(*it == "}"){
-							blk.second = it;
+							blk.end = it;
 							break;
 						}
 					}
 
-					{
-						std::cout<<"function def"<<std::endl
-							<< "name:\t" << name << std::endl;
-						for(auto tmp=blk.first; tmp!=blk.second; tmp++){
-							std::cout<<*tmp<<" ";
-						}
-					}
+					std::cout<<"function def"<<std::endl
+						<< "name:\t" << name << std::endl;
+					blk.parse();
 				}
 				break;
 			case type::If:
