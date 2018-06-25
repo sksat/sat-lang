@@ -41,26 +41,26 @@ namespace ast {
 	class BinaryExpr: public Expr {
 	public:
 		token_t operator_;
-		std::unique_ptr<Expr> lhs, rhs;
+		std::shared_ptr<Expr> lhs, rhs;
 	};
 
 	// 代入
 	class SubstitutionExpr : public Expr {
 	public:
-		std::unique_ptr<Expr> expr;
+		std::shared_ptr<Expr> expr;
 	};
 
 	// 括弧
 	class BracketsExpr : public Expr {
 	public:
-		std::unique_ptr<Expr> expr;
+		std::shared_ptr<Expr> expr;
 	};
 
 	// 関数呼び出し
 	class CallFuncExpr : public Expr {
 	public:
 		token_t name;
-		std::unique_ptr<BracketsExpr> args;
+		std::shared_ptr<BracketsExpr> args;
 	};
 
 	// 変数定義
@@ -69,7 +69,7 @@ namespace ast {
 	class DefVariable : public Base {
 	public:
 		bool is_const();
-		std::unique_ptr<Expr> init_expr;
+		std::shared_ptr<Expr> init_expr;
 	};
 
 	// ブロック
@@ -77,8 +77,8 @@ namespace ast {
 	public:
 		void parse();
 
-		Block* parent = nullptr;
-		std::vector<std::unique_ptr<Base>> sub;
+		std::shared_ptr<Block> parent;
+		std::vector<std::shared_ptr<Base>> sub;
 	};
 
 	// 関数定義
@@ -89,14 +89,14 @@ namespace ast {
 	// ifブロック
 	class IfBlock : public Block {
 	public:
-		std::unique_ptr<Expr> cond_expr;
-		std::vector<std::unique_ptr<Block>> else_block;
+		std::shared_ptr<Expr> cond_expr;
+		std::vector<std::shared_ptr<Block>> else_block;
 	};
 
 	// loopブロック
 	class LoopBlock : public Block {
 	public:
-		std::unique_ptr<Expr> init_expr, cond_expr, update_expr; // for(init;cond;update){}
+		std::shared_ptr<Expr> init_expr, cond_expr, update_expr; // for(init;cond;update){}
 	};
 }
 
