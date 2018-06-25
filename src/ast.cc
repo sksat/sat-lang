@@ -14,37 +14,7 @@ namespace ast {
 		for(auto it=begin; it!=end; it++){
 			switch(it->type){
 			case type::Function:
-				{
-					it++; auto name = *it;
-					it++; if(*it != "(") std::cerr<<"func error"<<std::endl;
-					auto args = std::make_pair(it, it);
-					while(it!=end){
-						it++;
-						if(*it == ")"){
-							args.second = it;
-							break;
-						}
-					}
-					it++; if(*it == "<-"){
-						std::cerr<<"<- is not implemented"<<std::endl;
-						return;
-					}
-					if(*it != "{") std::cerr<<"func err"<<std::endl;
-					it++;
-					Block blk;
-					blk.begin = it;
-					while(it!=end){
-						it++;
-						if(*it == "}"){
-							blk.end = it;
-							break;
-						}
-					}
-
-					std::cout<<"function def"<<std::endl
-						<< "name:\t" << name << std::endl;
-					blk.parse();
-				}
+				parse_function(it);
 				break;
 			case type::If:
 			case type::Loop:
@@ -69,5 +39,51 @@ namespace ast {
 				break;
 			}
 		}
+	}
+
+	// itはFunction tokenの状態で呼ばれる
+	void Block::parse_function(token_iterator &it){
+		DefFuncBlock func;
+
+		it++;
+		func.name = *it; // 関数名
+		it++; if(*it != "(") std::cerr<<"function error"<<std::endl;
+
+		// 引数を取ってくる
+		auto args = std::make_pair(it, it);
+		while(it!=end){
+			it++;
+			if(*it != ")"){
+				args.second = it;
+				break;
+			}
+		}
+
+		// 返り値の型
+		if(*it == "<-"){
+			std::cerr<<"<- is not implemented."<<std::endl;
+			it++;
+		}
+
+		if(*it != "{") std::cerr<<"func error"<<std::endl;
+		it++;
+
+		func.begin = it;
+		while(it!=end){
+			it++;
+			if(*it == "}"){
+				func.end = it;
+				break;
+			}
+		}
+
+		std::cout << "function def:" << std::endl
+			<< "name:\t" << func.name << std::endl
+			<< "args: ";
+		for(auto i=args.first; i!=args.second; i++){
+			std::cout << *i << " ";
+		}
+		std::cout << std::endl;
+		func.parse();
 	}
 }

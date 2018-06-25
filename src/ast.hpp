@@ -10,6 +10,7 @@
 
 namespace ast {
 	using token_t = tokenizer::token_t;
+	using token_iterator = std::vector<token_t>::const_iterator;
 
 	class Base {
 	public:
@@ -18,7 +19,7 @@ namespace ast {
 
 		virtual void parse() = 0;
 
-		std::vector<token_t>::const_iterator begin, end;
+		token_iterator begin, end;
 	};
 
 	// 式
@@ -76,6 +77,7 @@ namespace ast {
 	class Block : public Base {
 	public:
 		void parse();
+		void parse_function(token_iterator&);
 
 		std::shared_ptr<Block> parent;
 		std::vector<std::shared_ptr<Base>> sub;
@@ -84,6 +86,7 @@ namespace ast {
 	// 関数定義
 	class DefFuncBlock : public Block {
 	public:
+		token_t name;
 	};
 
 	// ifブロック
