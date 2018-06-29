@@ -3,7 +3,13 @@
 #include "ast.hpp"
 
 namespace ast {
+	// 式
+	// Decimal,String
+	// var: Identifier
+	// func: Identifier()
 	void Expr::parse(){
+		using type = tokenizer::type_t;
+
 		auto it = begin;
 		std::cout<<"expr[[ ";
 		while(it!=end){
@@ -11,6 +17,35 @@ namespace ast {
 			it++;
 		}
 		std::cout<<"]]"<<std::endl;
+
+		it = begin;
+
+		std::vector<std::shared_ptr<Expr>> subexpr;
+		while(it!=end){
+			if(it->type == type::Decimal || it->type == type::String){
+				auto imm = std::make_shared<ImmExpr>();
+				imm->begin = imm->end = it;
+				imm->end++;
+				subexpr.push_back(imm);
+			}else if(it -> type == type::Identifier){
+				if(*(it+1) == "("){
+					auto fncall = std::make_shared<CallFuncExpr>();
+					fncall->begin = it;
+					fncall->name = *it;
+					it++;
+					fncall->args->begin = it;
+					while(*it!=")") it++;
+					fncall->end = fncall->args->end = it;
+					subexpr.push_back(fncall);
+				}
+			}else if(it->type == type::Operator){
+			}else throw;
+			it++;
+		}
+		for(const auto &e : subexpr){
+			std::cout<<"("<<e->to_src()<<")";
+		}
+		std::cout<<std::endl;
 	}
 
 	// ブロック中のコードの種類
@@ -36,21 +71,6 @@ namespace ast {
 			// expr
 			default:
 				parse_expr(it);
-				break;
-				{
-					auto sub = std::make_pair(it, it);
-					while(it!=end){
-						it++;
-						if(it->type == type::Delim && *it==";"){
-							sub.second = it;
-							break;
-						}
-					}
-					std::cout<<"expr[ ";
-					for(auto hoge=sub.first; hoge!=sub.second; hoge++)
-						std::cout<<*hoge<<" ";
-					std::cout<<" ]"<<std::endl;
-				}
 				break;
 			}
 		}

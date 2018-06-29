@@ -18,6 +18,11 @@ namespace ast {
 		virtual ~Base(){}
 
 		virtual void parse() = 0;
+		std::string_view& to_src(){
+			static std::string_view src;
+			src = std::string_view(begin->data(), end->data()-begin->data());
+			return src;
+		}
 
 		token_iterator begin, end;
 	};
@@ -26,6 +31,8 @@ namespace ast {
 	class Expr : public Base {
 	public:
 		void parse();
+
+		std::shared_ptr<Expr> expr;
 	};
 
 	// 即値
@@ -61,6 +68,10 @@ namespace ast {
 	// 関数呼び出し
 	class CallFuncExpr : public Expr {
 	public:
+		CallFuncExpr(){
+			args = std::make_shared<BracketsExpr>();
+		}
+
 		token_t name;
 		std::shared_ptr<BracketsExpr> args;
 	};
