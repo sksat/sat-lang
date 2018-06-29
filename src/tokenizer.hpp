@@ -21,6 +21,8 @@ public:
 		Function,
 		If,
 		Loop,
+		Return,
+		Import,
 	};
 
 	static tokenizer_t sat;

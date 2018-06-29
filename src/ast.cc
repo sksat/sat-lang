@@ -19,9 +19,14 @@ namespace ast {
 			case type::If:
 			case type::Loop:
 			case type::Delim:
+			case type::Import:
+			case type::Return:
 				return;
 				break;
+			// expr
 			default:
+				// parse_element(it);
+				// break;
 				{
 					auto sub = std::make_pair(it, it);
 					while(it!=end){
@@ -33,7 +38,7 @@ namespace ast {
 					}
 					std::cout<<"expr[ ";
 					for(auto hoge=sub.first; hoge!=sub.second; hoge++)
-						std::cout<<*hoge;
+						std::cout<<*hoge<<" ";
 					std::cout<<" ]"<<std::endl;
 				}
 				break;
@@ -43,10 +48,10 @@ namespace ast {
 
 	// itはFunction tokenの状態で呼ばれる
 	void Block::parse_function(token_iterator &it){
-		DefFuncBlock func;
+		auto func = std::make_shared<DefFuncBlock>();
 
 		it++;
-		func.name = *it; // 関数名
+		func->name = *it; // 関数名
 		it++; if(*it != "(") std::cerr<<"function error"<<std::endl;
 
 		// 引数を取ってくる
@@ -68,22 +73,24 @@ namespace ast {
 		if(*it != "{") std::cerr<<"func error"<<std::endl;
 		it++;
 
-		func.begin = it;
+		func->begin = it;
 		while(it!=end){
 			it++;
 			if(*it == "}"){
-				func.end = it;
+				func->end = it;
 				break;
 			}
 		}
 
 		std::cout << "function def:" << std::endl
-			<< "name:\t" << func.name << std::endl
+			<< "name:\t" << func->name << std::endl
 			<< "args: ";
 		for(auto i=args.first; i!=args.second; i++){
 			std::cout << *i << " ";
 		}
 		std::cout << std::endl;
-		func.parse();
+		func->parse();
+
+		sub.push_back(func);
 	}
 }

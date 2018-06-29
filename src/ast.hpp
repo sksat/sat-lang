@@ -73,6 +73,17 @@ namespace ast {
 		std::shared_ptr<Expr> init_expr;
 	};
 
+	// import
+	class Import : public Base {
+	public:
+	};
+
+	// return
+	class Return : public Base {
+	public:
+		std::shared_ptr<Expr> ret_expr;
+	};
+
 	// ブロック
 	class Block : public Base {
 	public:
@@ -93,7 +104,7 @@ namespace ast {
 	class IfBlock : public Block {
 	public:
 		std::shared_ptr<Expr> cond_expr;
-		std::vector<std::shared_ptr<Block>> else_block;
+		std::vector<std::shared_ptr<IfBlock>> else_block;
 	};
 
 	// loopブロック

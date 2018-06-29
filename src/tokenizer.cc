@@ -65,6 +65,8 @@ tokenizer::tokenizer_t tokenizer::sat = [](std::string_view &src){
 		if(token == "fn") t = token_type::Function;
 		else if(token == "if") t = token_type::If;
 		else if(token == "loop") t = token_type::Loop;
+		else if(token == "return") t = token_type::Return;
+		else if(token == "import") t = token_type::Import;
 		else if(token[0] == '0'){
 			if(token.size() == 1) // ただの'0'
 				t = token_type::Decimal;
