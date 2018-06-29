@@ -3,6 +3,16 @@
 #include "ast.hpp"
 
 namespace ast {
+	void Expr::parse(){
+		auto it = begin;
+		std::cout<<"expr[[ ";
+		while(it!=end){
+			std::cout<<*it<<" ";
+			it++;
+		}
+		std::cout<<"]]"<<std::endl;
+	}
+
 	// ブロック中のコードの種類
 	// 式: "なんちゃらかんちゃら;"
 	// if/loop文: "if () {}"
@@ -25,8 +35,8 @@ namespace ast {
 				break;
 			// expr
 			default:
-				// parse_element(it);
-				// break;
+				parse_expr(it);
+				break;
 				{
 					auto sub = std::make_pair(it, it);
 					while(it!=end){
@@ -44,6 +54,21 @@ namespace ast {
 				break;
 			}
 		}
+	}
+
+	void Block::parse_expr(token_iterator &it){
+		using type = tokenizer::type_t;
+		auto expr = std::make_shared<Expr>();
+		expr->begin = it;
+		while(it!=end){
+			it++;
+			if(it->type==type::Delim && *it==";"){
+				expr->end = it;
+				break;
+			}
+		}
+		expr->parse();
+		sub.push_back(expr);
 	}
 
 	// itはFunction tokenの状態で呼ばれる
@@ -83,7 +108,7 @@ namespace ast {
 		}
 
 		std::cout << "function def:" << std::endl
-			<< "name:\t" << func->name << std::endl
+			<< "name: " << func->name << std::endl
 			<< "args: ";
 		for(auto i=args.first; i!=args.second; i++){
 			std::cout << *i << " ";

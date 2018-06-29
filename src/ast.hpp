@@ -25,6 +25,7 @@ namespace ast {
 	// 式
 	class Expr : public Base {
 	public:
+		void parse();
 	};
 
 	// 即値
@@ -88,6 +89,7 @@ namespace ast {
 	class Block : public Base {
 	public:
 		void parse();
+		void parse_expr(token_iterator&);
 		void parse_function(token_iterator&);
 
 		std::shared_ptr<Block> parent;
